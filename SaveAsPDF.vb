@@ -1,27 +1,24 @@
-Sub MacroSaveAsPDF()
-'macro saves pdf either in the same folder where active doc is or in documents folder if file is not yet saved
-'
-    Dim strPath As String
-    Dim strPDFname As String
- 
-    strPDFname = InputBox("Enter name for PDF", "File Name", "example")
-    If strPDFname = "" Then 'user deleted text from inputbox, add default name
-        strPDFname = "example"
-    End If
-    strPath = ActiveDocument.Path
-    If strPath = "" Then    'doc is not saved yet
-        strPath = Options.DefaultFilePath(wdDocumentsPath) & Application.PathSeparator
-    Else
-        'just add \ at the end
-        strPath = strPath & Application.PathSeparator
-    End If
-    ActiveDocument.ExportAsFixedFormat OutputFileName:= _
-                                       strPath & strPDFname & ".pdf", _
-                                       ExportFormat:=wdExportFormatPDF, _
-                                       OpenAfterExport:=False, _
-                                       OptimizeFor:=wdExportOptimizeForPrint, _
-                                       Range:=wdExportAllDocument, _
-                                       IncludeDocProps:=True, _
-                                       CreateBookmarks:=wdExportCreateWordBookmarks, _
-                                       BitmapMissingFonts:=True
+Sub savepdf()
+
+Dim oDoc As Document
+Dim strFname As String
+Dim strPath As String
+Set oDoc = ActiveDocument
+'define the format of the filename - with the year and time as a prefix
+'adding seconds to the time will ensure that each time you use the macro you will get
+'a new copy.
+strFname = "BUY-Weekly Add-Drop " & _
+            Format(Date, "mm.dd.yyyy")
+
+'define the folder location to save the document
+strPath = "C:\Users\matt.walker\Desktop\Test\"
+With oDoc
+    'print the document to the current printer
+    '.PrintOut
+    'save the document in Word docx format
+    .SaveAs strPath & strFname & ".docx", FileFormat:=wdFormatDocumentDefault
+    'save the document as PDF format in the same folder
+    .SaveAs strPath & strFname & ".pdf", FileFormat:=wdFormatPDF
+    
+End With
 End Sub
