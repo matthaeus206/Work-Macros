@@ -61,7 +61,7 @@ Sub Mail_ActiveSheet()
         .SaveAs TempFilePath & TempFileName & FileExtStr, FileFormat:=FileFormatNum
         On Error Resume Next
         With OutMail
-            .to = "matt.walker@bartelldrugs.com"
+            .to = "itsupport@bartelldrugs.com"
             .CC = ""
             .BCC = ""
             .Subject = "PLOG Code"
