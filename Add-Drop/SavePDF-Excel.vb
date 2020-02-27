@@ -31,7 +31,7 @@ Call Mail_ActiveSheet
     Sheets("Ready to Deploy").ExportAsFixedFormat Type:=xlTypePDF, _
       Filename:=strPath, Quality:=xlQualityStandard, _
       IncludeDocProperties:=True, IgnorePrintAreas:=False, _
-      OpenAfterPublish:=True
+      OpenAfterPublish:=False
 
 Sheets("Ready to Deploy").Copy
  With Sheets("Ready to Deploy").UsedRange
