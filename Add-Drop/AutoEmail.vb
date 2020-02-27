@@ -56,16 +56,16 @@ Sub Mail_ActiveSheet()
 
     Set OutApp = CreateObject("Outlook.Application")
     Set OutMail = OutApp.CreateItem(0)
-
+            
     With Destwb
         .SaveAs TempFilePath & TempFileName & FileExtStr, FileFormat:=FileFormatNum
         On Error Resume Next
         With OutMail
-            .to = "itsupport@bartelldrugs.com"
+.to = "itsupport@bartelldrugs.com"
             .CC = ""
             .BCC = ""
             .Subject = "PLOG Code"
-            .Body = "Hi IT, When you have a moment, can you load this plog code? Thanks!"
+            .Body = "Hi IT," & vbCrLf & "When you have a chance, could you please upload these items to AX?" & vbCrLf & "Thanks!"
             .Attachments.Add Destwb.FullName
             'You can add other files also like this
             '.Attachments.Add ("C:\test.txt")
