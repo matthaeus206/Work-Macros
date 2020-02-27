@@ -3,7 +3,7 @@ Sub savepdf()
     Dim strPath As String
     Dim strPathSP As String
     Dim oDoc As Worksheet
-    Set oDoc = ActiveSheet
+    Set oDoc = Sheets("Ready to Deploy")
     
 strFname = "Weekly Add-Drop " & _
             Format(Date, "m.dd.yyyy")
@@ -22,19 +22,19 @@ Call Mail_ActiveSheet
     
 'ActiveWorkbook.SaveAs Filename:=strPath & "\" &
       'strFname & ".xlsx"
-    With ActiveSheet.PageSetup
+    With Sheets("Ready to Deploy").PageSetup
         .Orientation = xlLandscape
         .FitToPagesWide = 1
         .FitToPagesTall = 1
     End With
       
-    ActiveSheet.ExportAsFixedFormat Type:=xlTypePDF, _
+    Sheets("Ready to Deploy").ExportAsFixedFormat Type:=xlTypePDF, _
       Filename:=strPath, Quality:=xlQualityStandard, _
       IncludeDocProperties:=True, IgnorePrintAreas:=False, _
-      OpenAfterPublish:=False
+      OpenAfterPublish:=True
 
-ActiveSheet.Copy
- With ActiveSheet.UsedRange
+Sheets("Ready to Deploy").Copy
+ With Sheets("Ready to Deploy").UsedRange
  .Copy
  .PasteSpecial xlValues
  .PasteSpecial xlFormats
@@ -45,7 +45,7 @@ ActiveSheet.Copy
         "https://bartelldrugs.sharepoint.com/sites/bartellnet/buying/Shared%20Documents/Add%20Drop/2020/" & strFname & ".xlsx" _
         , FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
 
- ActiveSheet.ExportAsFixedFormat Type:=xlTypePDF, Filename:= _
+ Sheets("Ready to Deploy").ExportAsFixedFormat Type:=xlTypePDF, Filename:= _
         "https://bartelldrugs.sharepoint.com/sites/bartellnet/buying/Shared%20Documents/Add%20Drop/2020/" & strFname & ".pdf" _
         , Quality:=xlQualityStandard, IncludeDocProperties:=True, IgnorePrintAreas _
         :=False, OpenAfterPublish:=False
