@@ -11,6 +11,8 @@ strFname = "Weekly Add-Drop " & _
 'define the folder location to save the document
 strPath = "\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\" & _
       strFname & ".pdf"
+
+Call Mail_ActiveSheet
       
     'sFile = Application.DefaultFilePath & "\" & _
       'ActiveWorkbook.Name & ".pdf"
@@ -29,7 +31,7 @@ strPath = "\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\" & _
     ActiveSheet.ExportAsFixedFormat Type:=xlTypePDF, _
       Filename:=strPath, Quality:=xlQualityStandard, _
       IncludeDocProperties:=True, IgnorePrintAreas:=False, _
-      OpenAfterPublish:=True
+      OpenAfterPublish:=False
 
 ActiveSheet.Copy
  With ActiveSheet.UsedRange
@@ -39,6 +41,15 @@ ActiveSheet.Copy
  End With
  Application.CutCopyMode = False
  ActiveWorkbook.SaveAs "\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\" & strFname & ".xlsx"
- ActiveWorkbook.SaveAs "//bartelldrugs.sharepoint.com/:f:/r/sites/bartellnet/buying/Shared%20Documents/Add%20Drop/2020?csf=1&e=CoqESL/" & strFname & ".xlsx"
+ ActiveWorkbook.SaveAs Filename:= _
+        "https://bartelldrugs.sharepoint.com/sites/bartellnet/buying/Shared%20Documents/Add%20Drop/2020/" & strFname & ".xlsx" _
+        , FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
 
+ ActiveSheet.ExportAsFixedFormat Type:=xlTypePDF, Filename:= _
+        "https://bartelldrugs.sharepoint.com/sites/bartellnet/buying/Shared%20Documents/Add%20Drop/2020/" & strFname & ".pdf" _
+        , Quality:=xlQualityStandard, IncludeDocProperties:=True, IgnorePrintAreas _
+        :=False, OpenAfterPublish:=False
+      
+Call FnOpeneWordDoc
+      
 End Sub
