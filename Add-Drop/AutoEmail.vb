@@ -1,88 +1,56 @@
-Sub Mail_ActiveSheet()
-'Working in Excel 2000-2016
-'For Tips see: http://www.rondebruin.nl/win/winmail/Outlook/tips.htm
-    Dim FileExtStr As String
-    Dim FileFormatNum As Long
-    Dim Sourcewb As Workbook
-    Dim Destwb As Workbook
-    Dim TempFilePath As String
-    Dim TempFileName As String
-    Dim OutApp As Object
-    Dim OutMail As Object
-
-    With Application
-        .ScreenUpdating = False
-        .EnableEvents = False
-    End With
-
-    Set Sourcewb = ActiveWorkbook
-
-    'Copy the ActiveSheet to a new workbook
-    Sheets("Formatted for AX Promo").Copy
-    Set Destwb = ActiveWorkbook
-
-    'Determine the Excel version and file extension/format
-    With Destwb
-        If Val(Application.Version) < 12 Then
-            'You use Excel 97-2003
-            FileExtStr = ".xls": FileFormatNum = -4143
-        Else
-            'You use Excel 2007-2016
-            Select Case Sourcewb.FileFormat
-            Case 51: FileExtStr = ".xlsx": FileFormatNum = 51
-            Case 52:
-                If .HasVBProject Then
-                    FileExtStr = ".xlsm": FileFormatNum = 52
-                Else
-                    FileExtStr = ".xlsx": FileFormatNum = 51
-                End If
-            Case 56: FileExtStr = ".xls": FileFormatNum = 56
-            Case Else: FileExtStr = ".xlsb": FileFormatNum = 50
-            End Select
-        End If
-    End With
-
-    '    'Change all cells in the worksheet to values if you want
-    '    With Destwb.Sheets(1).UsedRange
-    '        .Cells.Copy
-    '        .Cells.PasteSpecial xlPasteValues
-    '        .Cells(1).Select
-    '    End With
-    '    Application.CutCopyMode = False
-
-    'Save the new workbook/Mail it/Delete it
-    TempFilePath = Environ$("temp") & "\"
-    TempFileName = "Formatted for AX Promo " & Format(Now, "m-dd-yy")
-
-    Set OutApp = CreateObject("Outlook.Application")
-    Set OutMail = OutApp.CreateItem(0)
+Sub savepdf()
+    Dim strFname As String
+    Dim strPath As String
+    Dim strPathSP As String
+    Dim oDoc As Worksheet
+    Set oDoc = Sheets("Ready to Deploy")
+    
+strFname = "Weekly Add-Drop " & _
+            Format(Date, "m.dd.yyyy")
             
-    With Destwb
-        .SaveAs TempFilePath & TempFileName & FileExtStr, FileFormat:=FileFormatNum
-        On Error Resume Next
-        With OutMail
-.to = "itsupport@bartelldrugs.com"
-            .CC = ""
-            .BCC = ""
-            .Subject = "PLOG Code"
-            .Body = "Hi IT," & vbCrLf & "When you have a chance, could you please upload these items to AX?" & vbCrLf & "Thanks!"
-            .Attachments.Add Destwb.FullName
-            'You can add other files also like this
-            '.Attachments.Add ("C:\test.txt")
-            .Send   'or use .Display
-        End With
-        On Error GoTo 0
-        .Close savechanges:=False
+'define the folder location to save the document
+strPath = "\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\" & _
+      strFname & ".pdf"
+      
+Call FnOpeneWordDoc
+Call Mail_ActiveSheet
+      
+    'sFile = Application.DefaultFilePath & "\" & _
+      'ActiveWorkbook.Name & ".pdf"
+
+    'Sheets("Sheet1").Select
+    'ActiveSheet.PageSetup
+    
+'ActiveWorkbook.SaveAs Filename:=strPath & "\" &
+      'strFname & ".xlsx"
+    With Sheets("Ready to Deploy").PageSetup
+        .Orientation = xlLandscape
+        .FitToPagesWide = 1
+        .FitToPagesTall = 1
     End With
+      
+    Sheets("Ready to Deploy").ExportAsFixedFormat Type:=xlTypePDF, _
+      Filename:=strPath, Quality:=xlQualityStandard, _
+      IncludeDocProperties:=True, IgnorePrintAreas:=False, _
+      OpenAfterPublish:=False
 
-    'Delete the file you have send
-    Kill TempFilePath & TempFileName & FileExtStr
+Sheets("Ready to Deploy").Copy
+ With Sheets("Ready to Deploy").UsedRange
+ .Copy
+ .PasteSpecial xlValues
+ .PasteSpecial xlFormats
+ End With
+ Application.CutCopyMode = False
+ ActiveWorkbook.SaveAs "\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\" & strFname & ".xlsx"
+ ActiveWorkbook.SaveAs Filename:= _
+        "https://bartelldrugs.sharepoint.com/sites/bartellnet/buying/Shared%20Documents/Add%20Drop/2020/" & strFname & ".xlsx" _
+        , FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
 
-    Set OutMail = Nothing
-    Set OutApp = Nothing
-
-    With Application
-        .ScreenUpdating = True
-        .EnableEvents = True
-    End With
+ Sheets("Ready to Deploy").ExportAsFixedFormat Type:=xlTypePDF, Filename:= _
+        "https://bartelldrugs.sharepoint.com/sites/bartellnet/buying/Shared%20Documents/Add%20Drop/2020/" & strFname & ".pdf" _
+        , Quality:=xlQualityStandard, IncludeDocProperties:=True, IgnorePrintAreas _
+        :=False, OpenAfterPublish:=False
+        
+Call Mail_storecomm
+      
 End Sub
