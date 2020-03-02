@@ -1,34 +1,36 @@
 Sub savepdf()
+'Main routine to print out PDFs and send mail to storecomm and run everything.
     Dim strFname As String
     Dim strPath As String
     Dim strPathSP As String
     Dim oDoc As Worksheet
     Set oDoc = Sheets("Ready to Deploy")  
 strFname = "Weekly Add-Drop " & _
-            Format(Date, "m.dd.yyyy")         
+            Format(Date, "m.dd.yyyy")
 'define the folder location to save the document
 strPath = "\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\" & _
       strFname & ".pdf"
-' external functions
 Call FnOpeneWordDoc
 Call Mail_ActiveSheet
 
     'sFile = Application.DefaultFilePath & "\" & _
       'ActiveWorkbook.Name & ".pdf"
+
     'Sheets("Sheet1").Select
     'ActiveSheet.PageSetup
-	'ActiveWorkbook.SaveAs Filename:=strPath & "\" &
+    
+'ActiveWorkbook.SaveAs Filename:=strPath & "\" &
       'strFname & ".xlsx"
     With Sheets("Ready to Deploy").PageSetup
         .Orientation = xlLandscape
         .FitToPagesWide = 1
         .FitToPagesTall = 1
     End With
+      
     Sheets("Ready to Deploy").ExportAsFixedFormat Type:=xlTypePDF, _
       Filename:=strPath, Quality:=xlQualityStandard, _
       IncludeDocProperties:=True, IgnorePrintAreas:=False, _
       OpenAfterPublish:=False
-
 Sheets("Ready to Deploy").Copy
  With Sheets("Ready to Deploy").UsedRange
  .Copy
@@ -44,7 +46,6 @@ Sheets("Ready to Deploy").Copy
  Sheets("Ready to Deploy").ExportAsFixedFormat Type:=xlTypePDF, Filename:= _
         "https://bartelldrugs.sharepoint.com/sites/bartellnet/buying/Shared%20Documents/Add%20Drop/2020/" & strFname & ".pdf" _
         , Quality:=xlQualityStandard, IncludeDocProperties:=True, IgnorePrintAreas _
-        :=False, OpenAfterPublish:=False   
-'Call Storecomm email
+        :=False, OpenAfterPublish:=False
 Call Mail_storecomm  
 End Sub
