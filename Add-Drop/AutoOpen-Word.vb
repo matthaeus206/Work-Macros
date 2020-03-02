@@ -20,7 +20,6 @@ With oDoc
     .SaveAs strPath & strFname & ".docx", FileFormat:=wdFormatDocumentDefault
     'save the document as PDF format in the same folder
     .SaveAs strPath & strFname & ".pdf", FileFormat:=wdFormatPDF
-    
 End With
 
 End Sub
