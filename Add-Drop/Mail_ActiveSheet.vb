@@ -11,15 +11,12 @@ Sub Mail_ActiveSheet()
 
     'Copy data from formatted ax and paste in ax promo as values only.
     Sheets("Formatted for AX Promo").Select
-    Range("C2").Select
-    ActiveSheet.Range("$A$1:$O$121").AutoFilter Field:=10, Criteria1:="<>"
-    Cells.Select
-    Range("C2").Activate
+    Range("A1:O122").Select
     Selection.Copy
     Sheets("AX Promo").Select
-    Range("A1:O121").Select
-    ActiveSheet.Paste
-    Range("K3").Select
+    Range("A1").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
 
     With Application
         .ScreenUpdating = False
