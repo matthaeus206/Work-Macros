@@ -1,6 +1,5 @@
 Sub Mail_ActiveSheet()
-'Working in Excel 2000-2016
-'For Tips see: http://www.rondebruin.nl/win/winmail/Outlook/tips.htm
+'This writes out Adds to IT and emails it.
     Dim FileExtStr As String
     Dim FileFormatNum As Long
     Dim Sourcewb As Workbook
@@ -10,6 +9,18 @@ Sub Mail_ActiveSheet()
     Dim OutApp As Object
     Dim OutMail As Object
 
+    'Copy data from formatted ax and paste in ax promo as values only.
+    Sheets("Formatted for AX Promo").Select
+    Range("C2").Select
+    ActiveSheet.Range("$A$1:$O$121").AutoFilter Field:=10, Criteria1:="<>"
+    Cells.Select
+    Range("C2").Activate
+    Selection.Copy
+    Sheets("AX Promo").Select
+    Range("A1:O121").Select
+    ActiveSheet.Paste
+    Range("K3").Select
+
     With Application
         .ScreenUpdating = False
         .EnableEvents = False
@@ -18,7 +29,7 @@ Sub Mail_ActiveSheet()
     Set Sourcewb = ActiveWorkbook
 
     'Copy the ActiveSheet to a new workbook
-    Sheets("Formatted for AX Promo").Copy
+    Sheets("AX Promo").Copy
     Set Destwb = ActiveWorkbook
 
     'Determine the Excel version and file extension/format
@@ -52,20 +63,20 @@ Sub Mail_ActiveSheet()
 
     'Save the new workbook/Mail it/Delete it
     TempFilePath = Environ$("temp") & "\"
-    TempFileName = "Formatted for AX Promo " & Format(Now, "m-dd-yy")
+    TempFileName = "AX Promo " & Format(Now, "m-dd-yy")
 
     Set OutApp = CreateObject("Outlook.Application")
     Set OutMail = OutApp.CreateItem(0)
-
+            
     With Destwb
         .SaveAs TempFilePath & TempFileName & FileExtStr, FileFormat:=FileFormatNum
         On Error Resume Next
         With OutMail
-            .to = "itsupport@bartelldrugs.com"
+            .to = "matt.walker@bartelldrugs.com"
             .CC = ""
             .BCC = ""
             .Subject = "PLOG Code"
-            .Body = "Hi IT, When you have a moment, can you load this plog code? Thanks!"
+            .Body = "Hi IT," & vbCrLf & vbCrLf & "When you have a chance, could you please upload these items to AX?" & vbCrLf & vbCrLf & "Thanks!"
             .Attachments.Add Destwb.FullName
             'You can add other files also like this
             '.Attachments.Add ("C:\test.txt")
@@ -85,4 +96,9 @@ Sub Mail_ActiveSheet()
         .ScreenUpdating = True
         .EnableEvents = True
     End With
+    
+    'clear sheet
+    Application.CutCopyMode = False
+    Selection.ClearContents
+    
 End Sub
