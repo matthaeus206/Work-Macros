@@ -1,6 +1,5 @@
 Sub Mail_storecomm()
-'Working in Excel 2000-2016
-'For Tips see: http://www.rondebruin.nl/win/winmail/Outlook/tips.htm
+'This sends out emails to storecomm and attaches required files.
     Dim FileExtStr As String
     Dim FileFormatNum As Long
     Dim Sourcewb As Workbook
@@ -18,7 +17,6 @@ Sub Mail_storecomm()
     Set Sourcewb = ActiveWorkbook
 
     'Copy the ActiveSheet to a new workbook
-    Sheets("Formatted for AX Promo").Copy
     Set Destwb = ActiveWorkbook
 
     'Determine the Excel version and file extension/format
@@ -61,7 +59,9 @@ Sub Mail_storecomm()
         .SaveAs TempFilePath & TempFileName & FileExtStr, FileFormat:=FileFormatNum
         On Error Resume Next
         With OutMail
+            ' Change email to correct recipient
             .to = "matt.walker@bartelldrugs.com"
+            ' CC mark becker
             .CC = ""
             .BCC = ""
             .Subject = "Weekly Add-Drop " & Format(Date, "m.dd.yyyy")
