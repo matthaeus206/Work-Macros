@@ -4,14 +4,15 @@ Sub savepdf()
     Dim strPath As String
     Dim strPathSP As String
     Dim oDoc As Worksheet
-    Set oDoc = Sheets("Ready to Deploy")  
+    Set oDoc = Sheets("Ready to Deploy")
 strFname = "Weekly Add-Drop " & _
             Format(Date, "m.dd.yyyy")
 'define the folder location to save the document
 strPath = "\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\" & _
       strFname & ".pdf"
-Call FnOpeneWordDoc
+
 Call Mail_ActiveSheet
+Call FnOpeneWordDoc
 
     'sFile = Application.DefaultFilePath & "\" & _
       'ActiveWorkbook.Name & ".pdf"
@@ -47,5 +48,5 @@ Sheets("Ready to Deploy").Copy
         "https://bartelldrugs.sharepoint.com/sites/bartellnet/buying/Shared%20Documents/Add%20Drop/2020/" & strFname & ".pdf" _
         , Quality:=xlQualityStandard, IncludeDocProperties:=True, IgnorePrintAreas _
         :=False, OpenAfterPublish:=False
-Call Mail_storecomm  
+Call Mail_storecomm
 End Sub
