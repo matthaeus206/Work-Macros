@@ -1,4 +1,5 @@
 Sub Mail_ActiveSheet()
+Application.ScreenUpdating = False
 'This writes out Adds to IT and emails it.
     Dim FileExtStr As String
     Dim FileFormatNum As Long
@@ -69,15 +70,17 @@ Sub Mail_ActiveSheet()
         .SaveAs TempFilePath & TempFileName & FileExtStr, FileFormat:=FileFormatNum
         On Error Resume Next
         With OutMail
+            '.to = "itsupport@bartelldrugs.com"
             .to = "matt.walker@bartelldrugs.com"
-            .CC = ""
-            .BCC = ""
+            '.CC = vbNullString
+            '.BCC = vbNullString
             .Subject = "PLOG Code"
             .Body = "Hi IT," & vbCrLf & vbCrLf & "When you have a chance, could you please upload these items to AX?" & vbCrLf & vbCrLf & "Thanks!"
             .Attachments.Add Destwb.FullName
             'You can add other files also like this
             '.Attachments.Add ("C:\test.txt")
-            .Send   'or use .Display
+            '.Send   'or use
+            .Display
         End With
         On Error GoTo 0
         .Close savechanges:=False
