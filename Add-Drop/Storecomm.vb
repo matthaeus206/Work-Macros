@@ -1,4 +1,5 @@
 Sub Mail_storecomm()
+Application.ScreenUpdating = False
 'This sends out emails to storecomm and attaches required files.
     Dim FileExtStr As String
     Dim FileFormatNum As Long
@@ -60,9 +61,10 @@ Sub Mail_storecomm()
         On Error Resume Next
         With OutMail
             ' Change email to correct recipient
+            '.to = "storecomm@bartelldrugs.com"
             .to = "matt.walker@bartelldrugs.com"
             ' CC mark becker
-            .CC = ""
+            '.CC = "mark.becker@bartelldrugs.com"
             .BCC = ""
             .Subject = "Weekly Add-Drop " & Format(Date, "m.dd.yyyy")
             .Body = "Hi," & vbCrLf & vbCrLf & "Could you please send this out to the stores?" & vbCrLf & vbCrLf & "If you have any questions, feel free to ask me." & vbCrLf & vbCrLf & "Thanks!"
@@ -70,7 +72,8 @@ Sub Mail_storecomm()
             .Attachments.Add ("\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\Weekly Add-Drop " & Format(Date, "m.dd.yyyy") & ".pdf")
             'You can add other files also like this
             '.Attachments.Add ("C:\test.txt")
-            .Send   'or use .Display
+            '.Send   'or use
+            .Display
         End With
         On Error GoTo 0
         .Close savechanges:=False
