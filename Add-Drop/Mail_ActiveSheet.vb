@@ -10,6 +10,10 @@ Application.ScreenUpdating = False
     Dim OutApp As Object
     Dim OutMail As Object
 
+    'Filter range
+    Sheets("Formatted for AX Promo").Select
+    ActiveSheet.Range("$A$1:$O$122").AutoFilter Field:=10, Criteria1:="<>"
+
     'Copy data from formatted ax and paste in ax promo as values only.
     Sheets("Formatted for AX Promo").Select
     Range("A1:O122").Select
@@ -70,8 +74,8 @@ Application.ScreenUpdating = False
         .SaveAs TempFilePath & TempFileName & FileExtStr, FileFormat:=FileFormatNum
         On Error Resume Next
         With OutMail
-            '.to = "itsupport@bartelldrugs.com"
-            .to = "matt.walker@bartelldrugs.com"
+            .to = "itsupport@bartelldrugs.com"
+            '.to = "matt.walker@bartelldrugs.com"
             '.CC = vbNullString
             '.BCC = vbNullString
             .Subject = "PLOG Code"
