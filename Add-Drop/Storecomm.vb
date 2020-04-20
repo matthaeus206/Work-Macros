@@ -14,6 +14,15 @@ Application.ScreenUpdating = False
         .ScreenUpdating = False
         .EnableEvents = False
     End With
+    
+    ' Standard Font size and typeface
+Sheets("Ready to Deploy").Select
+    Columns("A:L").Select
+    Range("A5").Activate
+    With Selection.font
+        .Name = "Arial"
+        .Size = 16
+    End With
 
     Set Sourcewb = ActiveWorkbook
 
@@ -61,10 +70,10 @@ Application.ScreenUpdating = False
         On Error Resume Next
         With OutMail
             ' Change email to correct recipient
-            '.to = "storecomm@bartelldrugs.com"
-            .to = "matt.walker@bartelldrugs.com"
+            .to = "storecomm@bartelldrugs.com"
+            '.to = "matt.walker@bartelldrugs.com"
             ' CC mark becker
-            '.CC = "mark.becker@bartelldrugs.com"
+            .CC = "mark.becker@bartelldrugs.com"
             .BCC = ""
             .Subject = "Weekly Add-Drop " & Format(Date, "m.dd.yyyy")
             .Body = "Hi," & vbCrLf & vbCrLf & "Could you please send this out to the stores?" & vbCrLf & vbCrLf & "If you have any questions, feel free to ask me." & vbCrLf & vbCrLf & "Thanks!"
