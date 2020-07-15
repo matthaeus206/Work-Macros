@@ -12,11 +12,11 @@ Application.ScreenUpdating = False
 
     'Filter range
     Sheets("Formatted for AX Promo").Select
-    ActiveSheet.Range("$A$1:$O$122").AutoFilter Field:=10, Criteria1:="<>"
+    ActiveSheet.Range("$A$1:$O$700").AutoFilter Field:=10, Criteria1:="<>"
 
     'Copy data from formatted ax and paste in ax promo as values only.
     Sheets("Formatted for AX Promo").Select
-    Range("A1:O122").Select
+    Range("A1:O700").Select
     Selection.Copy
     Sheets("AX Promo").Select
     Range("A1").Select
@@ -97,7 +97,7 @@ Application.ScreenUpdating = False
     Set OutApp = Nothing
 
     With Application
-        .ScreenUpdating = True
+        .ScreenUpdating = False
         .EnableEvents = True
     End With
     
