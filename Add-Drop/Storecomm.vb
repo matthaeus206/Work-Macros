@@ -75,7 +75,7 @@ Sheets("Ready to Deploy").Select
             ' CC mark becker
             .CC = "mark.becker@bartelldrugs.com"
             .BCC = ""
-            .Subject = "Weekly Add-Drop " & Format(Date, "m.dd.yyyy")
+            .Subject = "Weekly Add-Drop " & Format(Date, "m/dd/yyyy")
             .Body = "Hi," & vbCrLf & vbCrLf & "Could you please send this out to the stores?" & vbCrLf & vbCrLf & "If you have any questions, feel free to ask me." & vbCrLf & vbCrLf & "Thanks!"
             .Attachments.Add ("\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\BUY-Weekly Add-Drop " & Format(Date, "m.dd.yyyy") & ".pdf")
             .Attachments.Add ("\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\Weekly Add-Drop " & Format(Date, "m.dd.yyyy") & ".pdf")
@@ -85,6 +85,9 @@ Sheets("Ready to Deploy").Select
             .Display
         End With
         On Error GoTo 0
+    '   Create Error Message box if I forget to create Buy Weekly Add Drop word doc.
+        'On Error GoTo ErrMsg
+        'ErrMsg:    MsgBox ("Missing Word File"),On Error GoTo 0
         .Close savechanges:=False
     End With
 
@@ -95,7 +98,7 @@ Sheets("Ready to Deploy").Select
     Set OutApp = Nothing
 
     With Application
-        .ScreenUpdating = True
+        .ScreenUpdating = False
         .EnableEvents = True
     End With
 End Sub
