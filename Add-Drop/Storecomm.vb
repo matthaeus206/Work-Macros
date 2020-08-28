@@ -77,8 +77,8 @@ Sheets("Ready to Deploy").Select
             .BCC = ""
             .Subject = "Weekly Add-Drop " & Format(Date, "m/dd/yyyy")
             .Body = "Hi," & vbCrLf & vbCrLf & "Could you please send this out to the stores?" & vbCrLf & vbCrLf & "If you have any questions, feel free to ask me." & vbCrLf & vbCrLf & "Thanks!"
-            .Attachments.Add ("\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\BUY-Weekly Add-Drop " & Format(Date, "m.dd.yyyy") & ".pdf")
-            .Attachments.Add ("\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\2020\Weekly Add-Drop " & Format(Date, "m.dd.yyyy") & ".pdf")
+            .Attachments.Add ("\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\" & Format(Date, "yyyy") & "\BUY-Weekly Add-Drop " & Format(Date, "m.dd.yyyy") & ".pdf")
+            .Attachments.Add ("\\bdshare\buyers\Add-Drop\WEEKLY ADD DROPS\" & Format(Date, "yyyy") & "\Weekly Add-Drop " & Format(Date, "m.dd.yyyy") & ".pdf")
             'You can add other files also like this
             '.Attachments.Add ("C:\test.txt")
             '.Send   'or use
