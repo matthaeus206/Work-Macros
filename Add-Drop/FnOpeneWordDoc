@@ -1,12 +1,9 @@
 Function FnOpeneWordDoc()
-
+Application.ScreenUpdating = False
    Dim objWord
    Dim objDoc
-
    Set objWord = CreateObject("Word.Application")
-
-   Set objDoc = objWord.Documents.Open("C:\Users\matt.walker\Desktop\BUY-Weekly Add-Drop - Autofill Template - Macro.docm")
-
+   Set objDoc = objWord.Documents.Open("C:\Users\matt.walker\Desktop\Test\BUY-Weekly Add-Drop - Autofill Template - Macro.docm")
    objWord.Visible = True
 
 End Function
