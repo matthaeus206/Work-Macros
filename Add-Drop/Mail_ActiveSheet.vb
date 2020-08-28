@@ -97,6 +97,7 @@ Application.ScreenUpdating = False
     Set OutApp = Nothing
 
     With Application
+    ' .ScreenUpdating must = False. True drastically decreases speed.
         .ScreenUpdating = False
         .EnableEvents = True
     End With
