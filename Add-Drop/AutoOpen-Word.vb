@@ -20,6 +20,8 @@ With oDoc
     .SaveAs strPath & strFname & ".docx", FileFormat:=wdFormatDocumentDefault
     'save the document as PDF format in the same folder
     .SaveAs strPath & strFname & ".pdf", FileFormat:=wdFormatPDF
+    'Save to sharepoint.
+    .SaveAs "https://bartelldrugs.sharepoint.com/sites/bartellnet/buying/Shared%20Documents/Add%20Drop/" & Format(Date, "yyyy") & "/" & strFname & ".pdf", FileFormat:=wdFormatPDF
 End With
 
 End Sub
