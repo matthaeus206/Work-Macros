@@ -1,10 +1,26 @@
 Sub savepdf()
 Application.ScreenUpdating = False
+Application.EnableEvents = False
 'Main routine to print out PDFs and send mail to storecomm and run everything.
     Dim strFname As String
     Dim strPath As String
     Dim strPathSP As String
     Dim oDoc As Worksheet
+    Dim Ans As Long
+    
+'Message Box
+If Weekday(Now) = vbThursday Then
+    Ans = MsgBox("Send Out?", vbYesNo + vbQuestion, "Save and Send to Stores")
+    Sheets("Input Info").Select
+    Range("A2:C2").Interior.ColorIndex = 3
+ElseIf Ans = vbNo Then
+    Exit Sub
+ElseIf Weekday(Now) <> vbThursday Then
+    Ans = MsgBox("Save and Send to Stores?", vbYesNo + vbQuestion, "Too Early to Send Out?")
+ElseIf Ans = vbNo Then
+    Exit Sub
+End If
+
     Set oDoc = Sheets("Ready to Deploy")
 strFname = "Weekly Add-Drop " & _
             Format(Date, "m.dd.yyyy")
@@ -23,6 +39,15 @@ Call Mail_ActiveSheet
     
 'ActiveWorkbook.SaveAs Filename:=strPath & "\" &
       'strFname & ".xlsx"
+      
+    'Ensures that add-drop is always at correct font and size
+    Sheets("Ready to Deploy").Select
+    Cells.Select
+    With Selection.font
+        .Name = "Arial"
+        .Size = 16
+    End With
+    
     With Sheets("Ready to Deploy").PageSetup
         .LeftMargin = Application.InchesToPoints(0.7)
         .RightMargin = Application.InchesToPoints(0.7)
@@ -55,7 +80,7 @@ Call Mail_ActiveSheet
       Filename:=strPath, Quality:=xlQualityStandard, _
       IncludeDocProperties:=True, IgnorePrintAreas:=False, _
       OpenAfterPublish:=False
-Sheets("Ready to Deploy").Copy
+ Sheets("Ready to Deploy").Copy
  With Sheets("Ready to Deploy").UsedRange
  .Copy
  .PasteSpecial xlValues
