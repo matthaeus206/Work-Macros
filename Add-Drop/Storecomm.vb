@@ -9,6 +9,7 @@ Application.ScreenUpdating = False
     Dim TempFileName As String
     Dim OutApp As Object
     Dim OutMail As Object
+    Dim Ans As Long
 
     With Application
         .ScreenUpdating = False
@@ -16,9 +17,8 @@ Application.ScreenUpdating = False
     End With
     
     ' Standard Font size and typeface
-Sheets("Ready to Deploy").Select
-    Columns("A:L").Select
-    Range("A5").Activate
+    Sheets("Ready to Deploy").Select
+    Cells.Select
     With Selection.font
         .Name = "Arial"
         .Size = 16
@@ -101,4 +101,8 @@ Sheets("Ready to Deploy").Select
         .ScreenUpdating = False
         .EnableEvents = True
     End With
-End Sub
+    
+    'Message Box
+    Ans = MsgBox("Complete", vbOKOnly, "Complete")
+    
+    End Sub
