@@ -101,3 +101,118 @@ lngTotal = 10 - lngTotal + N
 
 CheckDigit = strTemp & (lngTotal - N)
 End Function
+
+Public Function CopyFiles(ByVal sourceRange As Range, ByVal destinationPath As String) As Boolean
+' Copies items from one folder to another
+    Dim sourcePaths As Variant
+    Dim i As Long
+    
+    sourcePaths = sourceRange.Value
+    
+    For i = LBound(sourcePaths, 1) To UBound(sourcePaths, 1)
+        On Error GoTo CopyFileError
+        FileCopy sourcePaths(i, 1), destinationPath & "\" & Dir(sourcePaths(i, 1))
+        On Error GoTo 0
+    Next i
+    
+    CopyFiles = True
+    Exit Function
+
+CopyFileError:
+    CopyFiles = False
+End Function
+
+Public Function InsertImage(filePathRange As Range)
+' This takes images from a list of paths and inserts it in active sheet.
+    Dim objShape As Object
+    Dim filePath As String
+
+    For Each cell In filePathRange
+        filePath = cell.Value
+
+        'Insert the image into the active worksheet
+        Set objShape = ActiveSheet.Shapes.AddPicture(filePath, msoFalse, msoTrue, 0, 0, -1, -1)
+
+        'Adjust the size of the image as needed
+        objShape.Width = objShape.Width * 0.5
+		objShape.Height = objShape.Height * 0.5
+    Next cell
+End Function
+
+Function CopyFilesToFolder(filePathsRange As Range, destFolderPath As String) As Boolean
+    Dim filePath As Variant
+    Dim fileName As String
+    Dim copySuccess As Boolean
+    
+    ' Check if the destination folder exists
+    If Dir(destFolderPath, vbDirectory) = "" Then
+        CopyFilesToFolder = False
+        Exit Function
+    End If
+    
+    ' Loop through each file path in the range and copy the file to the destination folder
+    copySuccess = True
+    For Each filePath In filePathsRange
+        ' Get the file name from the path
+        fileName = Right(filePath, Len(filePath) - InStrRev(filePath, "\"))
+        
+        ' Copy the file to the destination folder
+        On Error Resume Next
+        FileCopy filePath, destFolderPath & "\" & fileName
+        If Err.Number <> 0 Then
+            copySuccess = False
+        End If
+        On Error GoTo 0
+    Next filePath
+    
+    ' If no errors occurred during the copy process, return True
+    If copySuccess = True Then
+        CopyFilesToFolder = True
+    Else
+        CopyFilesToFolder = False
+    End If
+End Function
+
+Public Function RemoveLeadingDigits(ByVal inputString As String) As String
+    ' This function removes any leading digits from a string
+    Dim i As Long
+    Dim str As String
+    Dim num As Variant
+    
+    ' Find the position of the first non-digit character in the string
+    For i = 1 To Len(inputString)
+        If Not IsNumeric(Mid(inputString, i, 1)) Then
+            Exit For
+        End If
+    Next i
+    
+    ' Remove the leading digits and any subsequent spaces
+    str = Trim(Mid(inputString, i))
+    
+    ' Replace any errors with an empty string
+    On Error Resume Next
+    num = Application.WorksheetFunction.Substitute(inputString, Left(inputString, i - 1), "")
+    If Err.Number <> 0 Then
+        RemoveLeadingDigits = ""
+    Else
+        RemoveLeadingDigits = str
+    End If
+End Function
+
+Public Sub UpdateAllQueries()
+'' Speed up Macro
+ThisWorkbook.Queries.FastCombine = True
+    Application.Calculation = xlCalculationManual
+    Application.ScreenUpdating = False
+    Application.DisplayStatusBar = False
+    Application.EnableEvents = False
+    ActiveSheet.DisplayPageBreaks = False
+'' Refreshes all Queries
+    ActiveWorkbook.RefreshAll
+'' Resets Settings
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = True
+    Application.DisplayStatusBar = True
+    Application.EnableEvents = True
+    ActiveSheet.DisplayPageBreaks = True
+End Sub
