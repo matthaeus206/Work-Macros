@@ -32,7 +32,7 @@ Sub CopyFiles()
         ' Check if the file exists
         If fso.FileExists(filename) Then
             ' Copy file to destination folder
-            fso.CopyFile filename, destFolder & "\" & cell.Value & fileExtension
+            FileCopy filename, destFolder & "\" & cell.Value & fileExtension
             i = i + 1
         Else
             ' File not found, add to not found list
