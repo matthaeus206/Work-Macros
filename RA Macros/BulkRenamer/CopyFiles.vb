@@ -7,7 +7,6 @@ Sub CopyFiles()
     Dim i As Long
     Dim notFoundList As String
     Dim fileExtension As String
-    Dim fso As Object
     
     ' Get input values from user
     sourceFolder = InputBox("Enter source folder path:")
@@ -18,33 +17,25 @@ Sub CopyFiles()
     ' Disable alerts to prevent popups
     Application.DisplayAlerts = False
     
-    ' Disable screen updating
-    Application.ScreenUpdating = False
-    
-    ' Create FileSystemObject
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    
     ' Loop through each cell in selected range
     For Each cell In rng
-        ' Construct the full file path
-        filename = sourceFolder & "\" & cell.Value & fileExtension
-        
-        ' Check if the file exists
-        If fso.FileExists(filename) Then
-            ' Copy file to destination folder
-            FileCopy filename, destFolder & "\" & cell.Value & fileExtension
-            i = i + 1
-        Else
+        ' Loop through files in source folder
+        filename = Dir(sourceFolder & "\*" & cell.Value & "*" & fileExtension)
+        If filename = "" Then
             ' File not found, add to not found list
             notFoundList = notFoundList & cell.Value & vbCrLf
+        Else
+            ' Copy file to destination folder
+            FileCopy sourceFolder & "\" & filename, destFolder & "\" & filename
+            i = i + 1
         End If
+        Do While filename <> ""
+            filename = Dir()
+        Loop
     Next cell
     
     ' Enable alerts
     Application.DisplayAlerts = True
-    
-    ' Enable screen updating
-    Application.ScreenUpdating = True
     
     ' Display message with number of files copied
     MsgBox i & " file(s) copied."
@@ -60,8 +51,5 @@ Sub CopyFiles()
         ws.Range("A1").Value = "The following search terms were not found:"
         ws.Range("A2").Value = notFoundList
     End If
-    
-    ' Release FileSystemObject
-    Set fso = Nothing
     
 End Sub
