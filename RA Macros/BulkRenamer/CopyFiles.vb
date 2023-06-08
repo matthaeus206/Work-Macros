@@ -3,67 +3,64 @@ Sub CopyFiles()
     Dim destFolder As String
     Dim rng As Range
     Dim cell As Range
-    Dim fileExtension As String
-    Dim fso As Object
-    Dim folder As Object
-    Dim file As Object
+    Dim filename As String
     Dim i As Long
     Dim notFoundList As String
-
-    ' Disable screen updating and set calculation to manual
-    Application.ScreenUpdating = False
-    Application.Calculation = xlCalculationManual
-
+    Dim fileExtension As String
+    Dim filesToCopy As New Collection
+    
     ' Get input values from user
     sourceFolder = InputBox("Enter source folder path:")
     destFolder = InputBox("Enter destination folder path:")
     fileExtension = InputBox("Enter file extension:")
     Set rng = Application.InputBox("Select cells with search terms:", Type:=8)
     
-    ' Create FileSystemObject
-    Set fso = CreateObject("Scripting.FileSystemObject")
+    ' Disable screen updating and calculation
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
     
-    ' Disable alerts to prevent popups
-    Application.DisplayAlerts = False
+    ' Create FileSystemObject
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
     
     ' Loop through each cell in selected range
     For Each cell In rng
         ' Loop through files in source folder
-        Set folder = fso.GetFolder(sourceFolder)
-        
-        For Each file In folder.Files
-            If fso.GetExtensionName(file.Name) = fileExtension And file.Name Like "*" & cell.Value & "*" Then
-                ' Copy file to destination folder
-                file.Copy destFolder & "\" & file.Name
-                i = i + 1
-            End If
-        Next file
-        
-        Set folder = Nothing
+        filename = Dir(sourceFolder & "\*" & cell.Value & "*" & fileExtension)
+        Do While filename <> ""
+            ' Add the file to the list of files to be copied
+            filesToCopy.Add sourceFolder & "\" & filename
+            filename = Dir()
+        Loop
     Next cell
     
-    ' Enable alerts
-    Application.DisplayAlerts = True
-    
-    ' Display message with number of files copied
-    MsgBox i & " file(s) copied."
-    
-    ' Display list of search terms not found
-    If Len(notFoundList) > 0 Then
-        ' Create new sheet
-        Dim ws As Worksheet
-        Set ws = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
-        ws.Name = "Not Found"
+    ' Copy the files in batches
+    Dim batchSize As Long
+    batchSize = 100 ' Adjust the batch size as needed
+    i = 0
+    For i = 1 To filesToCopy.Count Step batchSize
+        ' Get the current batch of files
+        Dim batchFiles As New Collection
+        Dim j As Long
+        For j = i To i + batchSize - 1
+            If j <= filesToCopy.Count Then
+                batchFiles.Add filesToCopy(j)
+            End If
+        Next j
         
-        ' Display not found list in new sheet
-        ws.Range("A1").Value = "The following search terms were not found:"
-        ws.Range("A2").Value = notFoundList
-    End If
+        ' Copy the batch of files to the destination folder
+        For Each filename In batchFiles
+            fso.CopyFile filename, destFolder & "\" & fso.GetFileName(filename)
+        Next filename
+    Next i
     
-    ' Release FileSystemObject
-    Set fso = Nothing
-    
-    ' Enable screen updating and reset calculation mode
+    ' Enable screen updating and calculation
     Application.ScreenUpdating = True
     Application.Calculation = xlCalculationAutomatic
+    
+    ' Release resources
+    Set fso = Nothing
+    
+    ' Display message with number of files copied
+    MsgBox i - 1 & " file(s) copied."
 End Sub
