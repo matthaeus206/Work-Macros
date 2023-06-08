@@ -3,11 +3,17 @@ Sub CopyFiles()
     Dim destFolder As String
     Dim rng As Range
     Dim cell As Range
-    Dim filename As String
+    Dim fileExtension As String
+    Dim fso As Object
+    Dim folder As Object
+    Dim file As Object
     Dim i As Long
     Dim notFoundList As String
-    Dim fileExtension As String
-    
+
+    ' Disable screen updating and set calculation to manual
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+
     ' Get input values from user
     sourceFolder = InputBox("Enter source folder path:")
     destFolder = InputBox("Enter destination folder path:")
@@ -15,7 +21,6 @@ Sub CopyFiles()
     Set rng = Application.InputBox("Select cells with search terms:", Type:=8)
     
     ' Create FileSystemObject
-    Dim fso As Object
     Set fso = CreateObject("Scripting.FileSystemObject")
     
     ' Disable alerts to prevent popups
@@ -24,18 +29,17 @@ Sub CopyFiles()
     ' Loop through each cell in selected range
     For Each cell In rng
         ' Loop through files in source folder
-        filename = Dir(sourceFolder & "\*" & cell.Value & "*" & fileExtension)
-        If filename = "" Then
-            ' File not found, add to not found list
-            notFoundList = notFoundList & cell.Value & vbCrLf
-        Else
-            ' Copy file to destination folder
-            fso.CopyFile sourceFolder & "\" & filename, destFolder & "\" & filename
-            i = i + 1
-        End If
-        Do While filename <> ""
-            filename = Dir()
-        Loop
+        Set folder = fso.GetFolder(sourceFolder)
+        
+        For Each file In folder.Files
+            If fso.GetExtensionName(file.Name) = fileExtension And file.Name Like "*" & cell.Value & "*" Then
+                ' Copy file to destination folder
+                file.Copy destFolder & "\" & file.Name
+                i = i + 1
+            End If
+        Next file
+        
+        Set folder = Nothing
     Next cell
     
     ' Enable alerts
@@ -58,4 +62,8 @@ Sub CopyFiles()
     
     ' Release FileSystemObject
     Set fso = Nothing
+    
+    ' Enable screen updating and reset calculation mode
+    Application.ScreenUpdating = True
+    Application.Calculation = xlCalculationAutomatic
 End Sub
