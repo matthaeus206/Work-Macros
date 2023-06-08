@@ -7,35 +7,56 @@ Sub CopyFiles()
     Dim i As Long
     Dim notFoundList As String
     Dim fileExtension As String
+    Dim batchSize As Long
+    Dim filesToCopy As Collection
+    Dim file As Variant
     
     ' Get input values from user
     sourceFolder = InputBox("Enter source folder path:")
     destFolder = InputBox("Enter destination folder path:")
     fileExtension = InputBox("Enter file extension:")
+    batchSize = InputBox("Enter batch size (recommended: 1000):")
     Set rng = Application.InputBox("Select cells with search terms:", Type:=8)
     
-    ' Disable alerts to prevent popups
+    ' Disable alerts and screen updating to prevent popups and improve performance
     Application.DisplayAlerts = False
+    Application.ScreenUpdating = False
+    
+    ' Initialize collection for files to copy
+    Set filesToCopy = New Collection
     
     ' Loop through each cell in selected range
     For Each cell In rng
         ' Loop through files in source folder
         filename = Dir(sourceFolder & "\*" & cell.Value & "*" & fileExtension)
-        If filename = "" Then
-            ' File not found, add to not found list
-            notFoundList = notFoundList & cell.Value & vbCrLf
-        Else
-            ' Copy file to destination folder
-            FileCopy sourceFolder & "\" & filename, destFolder & "\" & filename
-            i = i + 1
-        End If
         Do While filename <> ""
+            ' Add file to collection
+            filesToCopy.Add sourceFolder & "\" & filename
             filename = Dir()
         Loop
     Next cell
     
-    ' Enable alerts
+    ' Loop through files in batches and copy them to destination folder
+    i = 0
+    For Each file In filesToCopy
+        FileCopy file, destFolder & "\" & GetFileNameFromPath(file)
+        i = i + 1
+        
+        ' Check if batch size limit is reached
+        If i Mod batchSize = 0 Then
+            ' Reset the counter and prevent interruption from user input
+            Application.EnableCancelKey = xlDisabled
+            DoEvents
+            Application.EnableCancelKey = xlInterrupt
+        
+            ' Update the progress to the user
+            Application.StatusBar = "Copying files: " & i & " files copied"
+        End If
+    Next file
+    
+    ' Enable alerts and screen updating
     Application.DisplayAlerts = True
+    Application.ScreenUpdating = True
     
     ' Display message with number of files copied
     MsgBox i & " file(s) copied."
@@ -52,4 +73,10 @@ Sub CopyFiles()
         ws.Range("A2").Value = notFoundList
     End If
     
+    ' Clear the status bar
+    Application.StatusBar = ""
 End Sub
+
+Function GetFileNameFromPath(ByVal fullPath As String) As String
+    ' Retrieve the file name from the full file path
+    GetFileNameFromPath = Mid(fullPath, InStrRev(fullPath, "\")
