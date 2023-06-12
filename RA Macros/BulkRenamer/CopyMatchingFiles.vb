@@ -92,4 +92,19 @@ Function SearchFile(ByVal folderPath As String, ByVal fileName As String) As Boo
 End Function
 
 Function IsValidFileName(ByVal fileName As String) As Boolean
-    Dim invalidChars()
+    Dim invalidChars() As String
+    Dim invalidChar As Variant
+    
+    ' List of characters that are not allowed in file names
+    invalidChars = Split("\ / : * ? "" < > |", " ")
+    
+    ' Check if the file name contains any invalid characters
+    For Each invalidChar In invalidChars
+        If InStr(fileName, invalidChar) > 0 Then
+            IsValidFileName = False
+            Exit Function
+        End If
+    Next invalidChar
+    
+    IsValidFileName = True
+End Function
