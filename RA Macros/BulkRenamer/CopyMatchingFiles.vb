@@ -39,7 +39,7 @@ Sub CopyMatchingFiles()
             ' If the file name is invalid, write it in the error sheet
             Set errorCell = errorSheet.Cells(errorSheet.Cells(Rows.Count, 1).End(xlUp).Row + 1, 1)
             errorCell.Value = fileName
-            Continue For
+            GoTo NextIteration
         End If
 
         ' Check if the file exists in the search folder or its subdirectories
@@ -57,6 +57,8 @@ Sub CopyMatchingFiles()
             Set errorCell = errorSheet.Cells(errorSheet.Cells(Rows.Count, 1).End(xlUp).Row + 1, 1)
             errorCell.Value = fileName
         End If
+
+NextIteration:
     Next cell
 
     MsgBox "File copying completed. Check the Error sheet for any missing files."
