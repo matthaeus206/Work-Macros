@@ -34,6 +34,14 @@ Sub CopyMatchingFiles()
         fileName = Trim(cell.Value)
         fileExists = False
 
+        ' Check if the file name is valid
+        If Not IsValidFileName(fileName) Then
+            ' If the file name is invalid, write it in the error sheet
+            Set errorCell = errorSheet.Cells(errorSheet.Cells(Rows.Count, 1).End(xlUp).Row + 1, 1)
+            errorCell.Value = fileName
+            Continue For
+        End If
+
         ' Check if the file exists in the search folder or its subdirectories
         If fileName <> "" Then
             fileExists = Dir(searchFolder & "\" & fileName, vbNormal) <> ""
@@ -53,3 +61,21 @@ Sub CopyMatchingFiles()
 
     MsgBox "File copying completed. Check the Error sheet for any missing files."
 End Sub
+
+Function IsValidFileName(ByVal fileName As String) As Boolean
+    Dim invalidChars() As String
+    Dim invalidChar As Variant
+
+    ' List of characters that are not allowed in file names
+    invalidChars = Split("\ / : * ? "" < > |", " ")
+
+    ' Check if the file name contains any invalid characters
+    For Each invalidChar In invalidChars
+        If InStr(fileName, invalidChar) > 0 Then
+            IsValidFileName = False
+            Exit Function
+        End If
+    Next invalidChar
+
+    IsValidFileName = True
+End Function
