@@ -18,21 +18,20 @@ Sub RenameFiles()
     'Exit the subroutine if the user clicks the cancel button on the input box
     If findText = "" Then Exit Sub
     
-    'Prompt the user to enter the text to replace with in the file names using an input box
-    Dim replaceText As String
-    replaceText = InputBox("Enter the text to replace with in the file names:")
-    
-    'Exit the subroutine if the user clicks the cancel button on the input box
-    If replaceText = "" Then Exit Sub
-    
     'Get all files in the directory
-    Set files = CreateObject("Scripting.FileSystemObject").GetFolder(folderPath).files
+    Set files = CreateObject("Scripting.FileSystemObject").GetFolder(folderPath).Files
     
     'Loop through each file and rename it
     For Each file In files
         currentName = file.Name
-        newName = Replace(currentName, findText, replaceText)
-        Name folderPath & "\" & currentName As folderPath & "\" & newName
+        
+        'Check if the findText exists in the currentName
+        If InStr(1, currentName, findText, vbTextCompare) > 0 Then
+            'Replace findText with an empty string
+            newName = Replace(currentName, findText, "")
+            
+            'Rename the file
+            Name folderPath & "\" & currentName As folderPath & "\" & newName
+        End If
     Next file
 End Sub
-
