@@ -5,11 +5,25 @@ Sub AddChartFormat()
 '
 
 '
+Sub AddChartFormat()
+    Dim filePath As String
+
+    ' Display a dialog box to select the file
+    With Application.FileDialog(msoFileDialogFilePicker)
+        .Title = "Select the text file"
+        .Filters.Clear
+        .Filters.Add "Text Files", "*.txt"
+        If .Show = -1 Then
+            filePath = .SelectedItems(1)
+        Else
+            Exit Sub ' User canceled the dialog
+        End If
+    End With
+
     Range("A1").Select
-    Workbooks.OpenText Filename:="C:\Users\mrcmrw\Desktop\Add.txt", Origin:=437 _
-        , StartRow:=1, DataType:=xlDelimited, TextQualifier:=xlDoubleQuote, _
-        ConsecutiveDelimiter:=False, Tab:=True, Semicolon:=False, Comma:=True, _
-        Space:=False, Other:=False, FieldInfo:=Array(Array(1, 2), Array(2, 1), Array( _
+    Workbooks.OpenText Filename:=filePath, Origin:=437, StartRow:=1, DataType:=xlDelimited, _
+        TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=False, Tab:=True, Semicolon:=False, _
+        Comma:=True, Space:=False, Other:=False, FieldInfo:=Array(Array(1, 2), Array(2, 1), Array( _
         3, 1), Array(4, 1), Array(5, 1), Array(6, 1), Array(7, 1), Array(8, 1), Array(9, 1), Array(10 _
         , 1), Array(11, 1), Array(12, 1), Array(13, 1), Array(14, 1), Array(15, 1), Array(16, 1), _
         Array(17, 1), Array(18, 1), Array(19, 1), Array(20, 1), Array(21, 1), Array(22, 1), Array( _
