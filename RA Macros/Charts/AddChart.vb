@@ -1,11 +1,4 @@
 Sub AddChartFormat()
-'
-' AddChartFormat Macro
-' Add Chart Format
-'
-
-'
-Sub AddChartFormat()
     Dim filePath As String
 
     ' Display a dialog box to select the file
