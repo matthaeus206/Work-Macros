@@ -24,3 +24,12 @@ let
     #"Reordered Columns1" = Table.ReorderColumns(#"Changed Type2",{"Sec #", "Name", "Date modified", "Upload Date", "Dupes?", "Path + Name"})
 in
     #"Reordered Columns1"
+
+
+
+let
+    // Step 1: Get the user-defined directory path from the named range "FolderPath"
+    SourceDirectory = Excel.CurrentWorkbook(){[Name="FolderPath"]}[Content]{0}[Column1],
+
+    // Step 2: Use the user-defined directory as the source to retrieve file information
+    Source = Folder.Files(SourceDirectory),
