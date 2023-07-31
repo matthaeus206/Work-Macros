@@ -1,38 +1,26 @@
 let
-    // Step 1: Get the user-defined directory path from cell C6 on the "Input" sheet
-    SourceDirectory = Excel.CurrentWorkbook(){[Name="Input"]}[Content]{0}[Column1],
-
     // Step 2: Use the user-defined directory as the source to retrieve file information
-    Source = Folder.Files(SourceDirectory),
+    Source = Folder.Files("L:\CatMrc\ITC\APOLLO\Space Management\RELEX FOLDER\Relex 5th Rehearsal\dupes"),
 
     // Step 3: Select the columns you need (Name, Extension, Folder Path, Date created, Date modified)
     #"Removed Other Columns" = Table.SelectColumns(Source,{"Name", "Extension", "Folder Path", "Date created", "Date modified"}),
-
-    // Step 4: Create a custom column "Custom" with the concatenation of Folder Path and Name
-    #"Added Custom" = Table.AddColumn(#"Removed Other Columns", "Custom", each [Folder Path] & [Name]),
-
-    // Step 5: Remove the "Folder Path" column since we already have the information in the "Custom" column
-    #"Removed Columns" = Table.RemoveColumns(#"Added Custom",{"Folder Path"}),
-
-    // Step 6: Reorder the columns for better visibility
-    #"Reordered Columns" = Table.ReorderColumns(#"Removed Columns",{"Name", "Date created", "Date modified", "Extension", "Custom"}),
-
-    // Step 7: Extract the first 5 characters of the "Name" column to create the "Sec" column
-    #"Added Custom1" = Table.AddColumn(#"Reordered Columns", "Sec", each Text.Start([Name], 5)),
-
-    // Step 8: Reorder the columns again to place "Sec" in the first column
-    #"Reordered Columns1" = Table.ReorderColumns(#"Added Custom1",{"Sec", "Name", "Date created", "Date modified", "Extension", "Custom"}),
-
-    // Step 9: Add a custom column "Duplicate?" to indicate if a file has duplicates based on "Sec"
-    #"Added Custom2" = Table.AddColumn(#"Reordered Columns1", "Duplicate?", each if List.Count(List.Select(#"Added Custom1"[Sec], each _ = [Sec])) > 1 then "Yes" else "No"),
-
-    // Step 10: Remove the "Sec" column as it's no longer needed
-    #"Removed Columns1" = Table.RemoveColumns(#"Added Custom2",{"Sec"}),
-
-    // Step 11: Add a custom column "Custom" with constant value 1 (for counting purposes, if needed)
-    #"Added Custom3" = Table.AddColumn(#"Removed Columns1", "Custom", each 1),
-
-    // Step 12: Reorder columns again for the final output
-    #"Final Output" = Table.ReorderColumns(#"Added Custom3",{"Name", "Date created", "Date modified", "Extension", "Custom", "Duplicate?", "Path + File + Ext"})
+    #"Added Custom" = Table.AddColumn(#"Removed Other Columns", "Custom", each [Folder Path]&[Name]),
+    #"Renamed Columns3" = Table.RenameColumns(#"Added Custom",{{"Custom", "Custom"}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Renamed Columns3",{{"Custom", "Path + Name"}}),
+    #"Filtered Rows" = Table.SelectRows(#"Renamed Columns", each ([Extension] = ".psa")),
+    #"Removed Columns" = Table.RemoveColumns(#"Filtered Rows",{"Folder Path"}),
+    #"Added Custom1" = Table.AddColumn(#"Removed Columns", "Sec #", each Text.Start([Name], 5)),
+    #"Reordered Columns" = Table.ReorderColumns(#"Added Custom1",{"Sec #", "Name", "Extension", "Date created", "Date modified", "Path + Name"}),
+    #"Merged Queries" = Table.NestedJoin(#"Reordered Columns", {"Sec #"}, Pivot, {"Sec #"}, "dupes (2)", JoinKind.LeftOuter),
+    #"Expanded dupes (2)" = Table.ExpandTableColumn(#"Merged Queries", "dupes (2)", {"Dupe?"}, {"dupes (2).Dupe?"}),
+    #"Renamed Columns1" = Table.RenameColumns(#"Expanded dupes (2)",{{"dupes (2).Dupe?", "Dupes?"}}),
+    #"Sorted Rows" = Table.Sort(#"Renamed Columns1",{{"Date created", Order.Ascending}}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Sorted Rows",{{"Date created", type date}}),
+    #"Removed Columns1" = Table.RemoveColumns(#"Changed Type",{"Date created", "Extension"}),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns1",{{"Date modified", type date}}),
+    #"Added Custom2" = Table.AddColumn(#"Changed Type1", "Custom", each Text.Start(Text.End([Name], 15),10)),
+    #"Renamed Columns2" = Table.RenameColumns(#"Added Custom2",{{"Custom", "Upload Date"}}),
+    #"Changed Type2" = Table.TransformColumnTypes(#"Renamed Columns2",{{"Upload Date", type date}}),
+    #"Reordered Columns1" = Table.ReorderColumns(#"Changed Type2",{"Sec #", "Name", "Date modified", "Upload Date", "Dupes?", "Path + Name"})
 in
-    #"Final Output"
+    #"Reordered Columns1"
