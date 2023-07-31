@@ -1,0 +1,16 @@
+let
+    Source = Folder.Files("L:\CatMrc\ITC\APOLLO\Space Management\RELEX FOLDER\Relex 5th Rehearsal\dupes"),
+    #"Removed Other Columns" = Table.SelectColumns(Source,{"Name", "Extension", "Folder Path", "Date created", "Date modified"}),
+    #"Added Custom" = Table.AddColumn(#"Removed Other Columns", "Custom", each [Folder Path]&[Name]),
+    #"Removed Columns" = Table.RemoveColumns(#"Added Custom",{"Folder Path"}),
+    #"Reordered Columns" = Table.ReorderColumns(#"Removed Columns",{"Name", "Date created", "Date modified", "Extension", "Custom"}),
+    #"Added Custom1" = Table.AddColumn(#"Reordered Columns", "Sec #", each Text.Start([Name], 5)),
+    #"Reordered Columns1" = Table.ReorderColumns(#"Added Custom1",{"Sec #", "Name", "Date created", "Date modified", "Extension", "Custom"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns1",{{"Custom", "Path + File +Ext"}}),
+    #"Added Custom2" = Table.AddColumn(#"Renamed Columns", "Duplicate?", each if List.Count(List.Select(Source[#"Sec"], each _ = [#"Sec"])) > 1 then "Yes" else "No"),
+    #"Renamed Columns1" = Table.RenameColumns(#"Added Custom2",{{"Sec #", "Sec"}}),
+    #"Removed Columns1" = Table.RemoveColumns(#"Renamed Columns1",{"Duplicate?"}),
+    #"Added Custom3" = Table.AddColumn(#"Removed Columns1", "Custom", each 1),
+    #"Reordered Columns2" = Table.ReorderColumns(#"Added Custom3",{"Sec", "Name", "Date created", "Date modified", "Custom", "Extension", "Path + File +Ext"})
+in
+    #"Reordered Columns2"
