@@ -36,3 +36,8 @@ let
     #"Reordered Columns2" = Table.ReorderColumns(#"Removed Columns1",{"Sec", "Name", "Date created", "Date modified", "Extension", "Duplicate?"})
 in
     #"Reordered Columns2"
+
+
+Expression.Error: The column 'Sec #' of the table wasn't found.
+Details:
+    Sec #
