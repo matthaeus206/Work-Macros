@@ -1,16 +1,44 @@
 let
-    Source = Folder.Files("L:\CatMrc\ITC\APOLLO\Space Management\RELEX FOLDER\Relex 5th Rehearsal\dupes"),
+    // Step 1: Get the user-defined directory path from cell C6 on the "Input" sheet
+    SourceDirectory = Excel.CurrentWorkbook(){[Name="Input"]}[Content]{0}[Column1],
+
+    // Step 2: Use the user-defined directory as the source to retrieve file information
+    Source = Folder.Files(SourceDirectory),
+
+    // Step 3: Select the columns you need (Name, Extension, Folder Path, Date created, Date modified)
     #"Removed Other Columns" = Table.SelectColumns(Source,{"Name", "Extension", "Folder Path", "Date created", "Date modified"}),
-    #"Added Custom" = Table.AddColumn(#"Removed Other Columns", "Custom", each [Folder Path]&[Name]),
+
+    // Step 4: Create a custom column "Custom" with the concatenation of Folder Path and Name
+    #"Added Custom" = Table.AddColumn(#"Removed Other Columns", "Custom", each [Folder Path] & [Name]),
+
+    // Step 5: Remove the "Folder Path" column since we already have the information in the "Custom" column
     #"Removed Columns" = Table.RemoveColumns(#"Added Custom",{"Folder Path"}),
+
+    // Step 6: Reorder the columns for better visibility
     #"Reordered Columns" = Table.ReorderColumns(#"Removed Columns",{"Name", "Date created", "Date modified", "Extension", "Custom"}),
+
+    // Step 7: Extract the first 5 characters of the "Name" column to create the "Sec #" column
     #"Added Custom1" = Table.AddColumn(#"Reordered Columns", "Sec #", each Text.Start([Name], 5)),
+
+    // Step 8: Reorder the columns again to place "Sec #" in the first column
     #"Reordered Columns1" = Table.ReorderColumns(#"Added Custom1",{"Sec #", "Name", "Date created", "Date modified", "Extension", "Custom"}),
-    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns1",{{"Custom", "Path + File +Ext"}}),
-    #"Added Custom2" = Table.AddColumn(#"Renamed Columns", "Duplicate?", each if List.Count(List.Select(Source[#"Sec"], each _ = [#"Sec"])) > 1 then "Yes" else "No"),
+
+    // Step 9: Rename the "Custom" column to "Path + File + Ext" for clarity
+    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns1",{{"Custom", "Path + File + Ext"}}),
+
+    // Step 10: Add a custom column "Duplicate?" to indicate if a file has duplicates based on "Sec #"
+    #"Added Custom2" = Table.AddColumn(#"Renamed Columns", "Duplicate?", each if List.Count(List.Select(Source[#"Sec #"], each _ = [#"Sec #"])) > 1 then "Yes" else "No"),
+
+    // Step 11: Rename the "Sec #" column to "Sec" for consistency
     #"Renamed Columns1" = Table.RenameColumns(#"Added Custom2",{{"Sec #", "Sec"}}),
+
+    // Step 12: Remove the "Duplicate?" column since it's not needed in the final output
     #"Removed Columns1" = Table.RemoveColumns(#"Renamed Columns1",{"Duplicate?"}),
+
+    // Step 13: Add a custom column "Custom" with constant value 1 (for counting purposes, if needed)
     #"Added Custom3" = Table.AddColumn(#"Removed Columns1", "Custom", each 1),
-    #"Reordered Columns2" = Table.ReorderColumns(#"Added Custom3",{"Sec", "Name", "Date created", "Date modified", "Custom", "Extension", "Path + File +Ext"})
+
+    // Step 14: Reorder columns again for the final output
+    #"Reordered Columns2" = Table.ReorderColumns(#"Added Custom3",{"Sec", "Name", "Date created", "Date modified", "Custom", "Extension", "Path + File + Ext"})
 in
     #"Reordered Columns2"
