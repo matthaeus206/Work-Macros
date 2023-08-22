@@ -258,3 +258,18 @@ For Each cn In wkb.Connections
 Next cn
 
 End Sub
+
+											
+'This macro auto sizes all columns in the active sheet.
+Sub AutoFitColumns()
+												
+Dim ws As Worksheet
+Dim rng As Range
+
+Set ws = ActiveSheet
+
+For Each rng In ws.Columns
+    rng.AutoFit
+Next rng
+
+End Sub
