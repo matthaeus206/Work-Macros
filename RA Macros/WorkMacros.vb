@@ -242,3 +242,19 @@ Sub UnhideSheets()
 		Sht.Visible = xlSheetVisible
 	Next Sht
 End Sub
+											
+'This macro refreshes all connections in the active workbook.
+Sub RefreshAllConnections()
+
+
+
+Dim wkb As Workbook
+Dim cn As WorkbookConnection
+
+Set wkb = ThisWorkbook
+
+For Each cn In wkb.Connections
+    cn.Refresh
+Next cn
+
+End Sub
