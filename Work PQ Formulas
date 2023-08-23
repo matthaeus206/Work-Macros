@@ -1,0 +1,2 @@
+# Equivalent of Left in Excel
+Text.Start([#"Customer/Vendor"], 3)
