@@ -1,0 +1,2 @@
+#Dynamic Pathway in PQ. Must name Dynamic Cell for this to work 
+Source = Excel.CurrentWorkbook(){[Name="DynamicPath"]}[Content]
