@@ -21,8 +21,16 @@ Sub CopyFiles()
         Exit Sub
     End If
     
-    ' Set range directly or use a defined range
-    ' Set rng = ThisWorkbook.Sheets("Sheet1").Range("A1:A10") ' Modify as needed
+    ' Get range from user
+    On Error Resume Next
+    Set rng = Application.InputBox("Select cells with search terms:", Type:=8)
+    On Error GoTo 0
+    
+    ' Check if range is set
+    If rng Is Nothing Then
+        MsgBox "Range not selected. Exiting the procedure."
+        Exit Sub
+    End If
     
     ' Create FileSystemObject
     Dim fso As Object
