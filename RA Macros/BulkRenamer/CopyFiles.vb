@@ -1,58 +1,84 @@
 Sub CopyFiles()
     Dim sourceFolder As String
     Dim destFolder As String
-    Dim fileExtension As String
-    Dim userRange As Range
+    Dim rng As Range
     Dim cell As Range
-    Dim fileNamePrefix As String
-    Dim errorList As Collection
-    Dim errorsSheet As Worksheet
-    Dim sourceFile As String
-    Dim destFile As String
-
-    ' Input source folder, destination folder, file extension, and user-defined range
-    sourceFolder = InputBox("Enter the source folder path:")
-    destFolder = InputBox("Enter the destination folder path:")
-    fileExtension = InputBox("Enter the file extension (e.g., txt, xls, xlsx):")
-    Set userRange = Application.InputBox("Select the user-defined range:", Type:=8)
-
-    ' Create a collection to store error file names
-    Set errorList = New Collection
-
-    ' Loop through each cell in the user-defined range
-    On Error Resume Next ' Ignore errors temporarily
-    For Each cell In userRange
-        ' Get the first 5 digits of the file name
-        fileNamePrefix = Left(cell.Value, 5)
-
-        ' Construct the full path of the source file
-        sourceFile = sourceFolder & "\" & fileNamePrefix & "." & fileExtension
-        ' Construct the full path of the destination file
-        destFile = destFolder & "\" & fileNamePrefix & "." & fileExtension
-
-        ' Debug print statements for checking file paths
-        Debug.Print "Source File: " & sourceFile
-        Debug.Print "Destination File: " & destFile
-
-        ' Check if the file exists in the source folder
-        If Dir(sourceFile) <> "" Then
-            ' File found, copy to destination
-            FileCopy sourceFile, destFile
+    Dim filename As String
+    Dim i As Long
+    Dim notFoundList As String
+    Dim fileExtension As String
+    
+    ' Get input values from user
+    sourceFolder = InputBox("Enter source folder path:")
+    destFolder = InputBox("Enter destination folder path:")
+    fileExtension = InputBox("Enter file extension:")
+    
+    ' Validate folder paths
+    If Not ValidateFolder(sourceFolder, "Source") Or Not ValidateFolder(destFolder, "Destination") Then
+        Exit Sub
+    End If
+    
+    Set rng = Application.InputBox("Select cells with search terms:", Type:=8)
+    
+    ' Create FileSystemObject
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    ' Disable alerts to prevent popups
+    Application.DisplayAlerts = False
+    
+    ' Loop through each cell in selected range
+    For Each cell In rng
+        ' Loop through files in source folder
+        filename = Dir(fso.BuildPath(sourceFolder, "*" & cell.Value & "*" & fileExtension))
+        If filename = "" Then
+            ' File not found, add to not found list
+            notFoundList = notFoundList & cell.Value & vbCrLf
         Else
-            ' File not found, add to error list
-            errorList.Add fileNamePrefix
+            ' Copy file to destination folder
+            On Error Resume Next
+            fso.CopyFile fso.BuildPath(sourceFolder, filename), fso.BuildPath(destFolder, filename)
+            On Error GoTo 0
+            i = i + 1
         End If
+        Do While filename <> ""
+            filename = Dir()
+        Loop
     Next cell
-    On Error GoTo 0 ' Reset error handling
-
-    ' Create a new worksheet for errors
-    Set errorsSheet = Worksheets.Add
-    errorsSheet.Name = "Errors Found"
-
-    ' Paste the error file names in the new worksheet
-    For i = 1 To errorList.Count
-        errorsSheet.Cells(i, 1).Value = errorList(i)
-    Next i
-
-    MsgBox "Copying files completed. Check 'Errors Found' sheet for any errors.", vbInformation
+    
+    ' Enable alerts
+    Application.DisplayAlerts = True
+    
+    ' Display message with number of files copied
+    MsgBox i & " file(s) copied."
+    
+    ' Display list of search terms not found
+    If Len(notFoundList) > 0 Then
+        ' Create new sheet
+        Dim ws As Worksheet
+        Set ws = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        ws.Name = "Not Found"
+        
+        ' Display not found list in new sheet
+        ws.Range("A1").Value = "The following search terms were not found:"
+        ws.Range("A2").Value = notFoundList
+    End If
+    
+    ' Release FileSystemObject
+    Set fso = Nothing
 End Sub
+
+Function ValidateFolder(folderPath As String, folderType As String) As Boolean
+    ' Validate if the folder exists
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    If Not fso.FolderExists(folderPath) Then
+        MsgBox folderType & " folder does not exist.", vbExclamation
+        ValidateFolder = False
+    Else
+        ValidateFolder = True
+    End If
+    
+    Set fso = Nothing
+End Function
