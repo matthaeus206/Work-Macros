@@ -8,11 +8,21 @@ Sub CopyFiles()
     Dim notFoundList As String
     Dim fileExtension As String
     
-    ' Get input values from user
+    ' Get input values from user with error handling
+    On Error Resume Next
     sourceFolder = InputBox("Enter source folder path:")
     destFolder = InputBox("Enter destination folder path:")
     fileExtension = InputBox("Enter file extension:")
-    Set rng = Application.InputBox("Select cells with search terms:", Type:=8)
+    On Error GoTo 0
+    
+    ' Check for InputBox cancellation
+    If sourceFolder = "" Or destFolder = "" Or fileExtension = "" Then
+        MsgBox "Input cancelled. Exiting the procedure."
+        Exit Sub
+    End If
+    
+    ' Set range directly or use a defined range
+    ' Set rng = ThisWorkbook.Sheets("Sheet1").Range("A1:A10") ' Modify as needed
     
     ' Create FileSystemObject
     Dim fso As Object
