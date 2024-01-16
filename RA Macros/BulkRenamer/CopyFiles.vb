@@ -7,10 +7,8 @@ Sub CopyFiles()
     Dim fileNamePrefix As String
     Dim errorList As Collection
     Dim errorsSheet As Worksheet
-    Dim destinationPath As String
     Dim sourceFile As String
     Dim destFile As String
-    Dim foundFile As Boolean
 
     ' Input source folder, destination folder, file extension, and user-defined range
     sourceFolder = InputBox("Enter the source folder path:")
@@ -22,15 +20,19 @@ Sub CopyFiles()
     Set errorList = New Collection
 
     ' Loop through each cell in the user-defined range
+    On Error Resume Next ' Ignore errors temporarily
     For Each cell In userRange
         ' Get the first 5 digits of the file name
         fileNamePrefix = Left(cell.Value, 5)
 
         ' Construct the full path of the source file
         sourceFile = sourceFolder & "\" & fileNamePrefix & "." & fileExtension
-
         ' Construct the full path of the destination file
         destFile = destFolder & "\" & fileNamePrefix & "." & fileExtension
+
+        ' Debug print statements for checking file paths
+        Debug.Print "Source File: " & sourceFile
+        Debug.Print "Destination File: " & destFile
 
         ' Check if the file exists in the source folder
         If Dir(sourceFile) <> "" Then
@@ -41,6 +43,7 @@ Sub CopyFiles()
             errorList.Add fileNamePrefix
         End If
     Next cell
+    On Error GoTo 0 ' Reset error handling
 
     ' Create a new worksheet for errors
     Set errorsSheet = Worksheets.Add
