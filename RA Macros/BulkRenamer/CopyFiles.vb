@@ -26,7 +26,10 @@ Sub CopyFiles()
     ' Loop through each cell in selected range
     For Each cell In rng
         ' Loop through files in source folder
+        On Error Resume Next ' Ignore errors and continue to the next iteration
         filename = Dir(sourceFolder & "\*" & cell.Value & "*" & fileExtension)
+        On Error GoTo 0 ' Reset error handling
+        
         Do While filename <> ""
             ' Add the file to the list of files to be copied
             filesToCopy.Add sourceFolder & "\" & filename
@@ -50,7 +53,9 @@ Sub CopyFiles()
         
         ' Copy the batch of files to the destination folder
         For Each filename In batchFiles
+            On Error Resume Next ' Ignore errors during file copy
             fso.CopyFile filename, destFolder & "\" & fso.GetFileName(filename)
+            On Error GoTo 0 ' Reset error handling
         Next filename
     Next i
     
