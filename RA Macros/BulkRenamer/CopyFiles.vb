@@ -42,7 +42,10 @@ Sub CopyFiles()
     ' Loop through each cell in selected range
     For Each Cell In rng
         ' Loop through files in source folder
+        Debug.Print "Current Cell Value: " & Cell.Value
         fileName = Dir(sourceFolder & "\*" & Cell.Value & "*" & fileExtension)
+        Debug.Print "Full File Path: " & sourceFolder & "\" & fileName
+        
         If fileName = "" Then
             ' File not found, add to not found list
             notFoundList = notFoundList & Cell.Value & vbCrLf
