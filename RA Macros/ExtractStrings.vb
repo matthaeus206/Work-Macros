@@ -2,11 +2,6 @@ Sub ExtractStrings()
     Dim directoryPath As String
     Dim fileFormat As String
     Dim extractSheet As Worksheet
-    Dim fileName As String
-    Dim fileContent As String
-    Dim startPos As Integer
-    Dim endPos As Integer
-    Dim extractedString As String
     
     ' Prompt user for directory path and file format
     directoryPath = InputBox("Enter the directory path:")
@@ -26,6 +21,7 @@ Sub SearchFiles(ByVal folderPath As String, ByVal fileFormat As String, ByVal ex
     Dim startPos As Integer
     Dim endPos As Integer
     Dim extractedString As String
+    Dim subfolderPath As String
     
     ' Search files in the current folder
     fileName = Dir(folderPath & "\*." & fileFormat)
@@ -55,10 +51,9 @@ Sub SearchFiles(ByVal folderPath As String, ByVal fileFormat As String, ByVal ex
     Loop
     
     ' Search files in subfolders
-    Dim subfolderPath As String
     subfolderPath = Dir(folderPath & "\*", vbDirectory)
-    Do While subfolderPath <> ""
-        If subfolderPath <> "." And subfolderPath <> ".." Then
+    Do While (Len(subfolderPath) > 0)
+        If (subfolderPath <> ".") And (subfolderPath <> "..") Then
             SearchFiles folderPath & "\" & subfolderPath, fileFormat, extractSheet
         End If
         subfolderPath = Dir
