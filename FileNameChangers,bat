@@ -2,7 +2,7 @@
 echo ----------------------------------------
 echo       Batch File Operations Menu
 echo ----------------------------------------
-echo 1. Batch File Name Changer
+echo 1. Batch File Name Changer - For Vestcom
 echo 2. Batch File Extension Changer
 echo ----------------------------------------
 
@@ -16,9 +16,9 @@ pause
 exit /b
 
 :NameChanger
-echo ----------------------------------------
-echo      Batch File Name Changer
-echo ----------------------------------------
+echo ----------------------------------------------
+echo      Batch File Name Changer - For Vestcom
+echo ----------------------------------------------
 echo This operation will change all instances of "-" to "_"
 echo Make sure you select the correct directory before running
 echo ----------------------------------------
