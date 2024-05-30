@@ -1,0 +1,14 @@
+<note type="base">Applied to table: ra.misc.salessum</note>
+<sel value="between(date;'05/29/2023';'05/29/2024')"/>
+<willbe name="Margin" value="(sales-cost)/sales" format="type:pct;dec:2"/>
+<colord cols="store,date,cat,catdesc,units,sales,cost,Margin"/>
+<sort col="date" dir="down"/>
+<sort col="cat" dir="down"/>
+<tabu label="Tabulation on Sales Summary by Category" breaks="store,cat,catdesc">
+  <tcol fun="sum" source="sales" label="Sum of`Sales"/>
+  <tcol fun="sum" source="cost" label="Sum of`Cost"/>
+  <tcol fun="sum" source="units" label="Sum of`Units"/>
+</tabu>
+<willbe name="margin" value="(t0-t1)/t0" label="Margin" format="type:pct;dec:2"/>
+<willbe name="margin_dollar" value="t0-t1" label="Margin $" format="type:currency;dec:2"/>
+<colord cols="store,cat,catdesc,t0,margin_dollar,margin"/>
