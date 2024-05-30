@@ -1,0 +1,41 @@
+<note type="base">Applied to table: ra.supply_chain.piadj</note>
+<base table="ra.supply_chain.piadj"/>
+<note type="link">The following link is to table: All Databases/Rite Aid/Calendar</note>
+<link table2="ra.calendar" col="post_date" col2="date" cols="fiscal_week_year"/>
+<note type="link">The following link is to table: All Databases/Rite Aid/Products</note>
+<link table2="ra.products" col="originalitemno" col2="originalitemno"/>
+<colord cols="store,adj_type,originalitemno,cat,catdesc,class,classdesc,subclass,subclassdesc,post_date,fiscal_week_year,trn_qty,alt_retail_price_1"/>
+<sel simple="1" value="(adj_type='CC')"/>
+<sel simple="1" value="(trn_qty<>0)"/>
+<sel simple="1" value="(between(post_date;20230529;20240529))"/>
+<note type="link">The following link is to table: All Databases/Rite Aid/Front End/Pricing Tables/Item Price</note>
+<link table2="ra.fe.pricing.ipbit_pbditem" col="originalitemno" col2="itemno" cols="avg_zoneprice">
+  <sel value="stat='ACTV'"/>
+  <sel value="uom_cde='EA'"/>
+  <note type="link">The following link is to table: All Databases/Rite Aid/Products</note>
+  <link table2="ra.products" col="itemno" col2="itemno" cols="cat"/>
+  <note type="link">The following link is to table: All Databases/Rite Aid/Calendar</note>
+  <link table2="ra.calendar" col="eff_dte" col2="date" cols="fiscal_week_year"/>
+  <willbe name="avg_zoneprice" value="g_avg(itemno;;prc)"/>
+  <willbe name="avgitemprice_first" value="g_first1(itemno;;)"/>
+  <sel value="avgitemprice_first=1"/>
+</link>
+<note type="link">The following link is to table: All Databases/Rite Aid/Front End/Pricing Tables/Item Cost</note>
+<link table2="ra.fe.pricing.ipbcs_pbitmcst" col="originalitemno" col2="itemno" cols="avg_zonecost">
+  <sel value="stat='ACTV'"/>
+  <sel value="uom_cde='EA'"/>
+  <note type="link">The following link is to table: All Databases/Rite Aid/Products</note>
+  <link table2="ra.products" col="itemno" col2="itemno" cols="cat"/>
+  <note type="link">The following link is to table: All Databases/Rite Aid/Calendar</note>
+  <link table2="ra.calendar" col="eff_dte" col2="date" cols="fiscal_week_year"/>
+  <willbe name="avg_zonecost" value="g_avg(itemno;;net_cst)"/>
+  <willbe name="avgitemcost_first" value="g_first1(itemno;;)"/>
+  <sel value="avgitemcost_first=1"/>
+</link>
+<willbe name="shrink_cost" value="avg_zonecost*trn_qty" label="Shrink Cost" format="type:currency;dec:2"/>
+<willbe name="shrink_price" value="avg_zoneprice*trn_qty" label="Shrink Price" format="type:currency;dec:2"/>
+<tabu label="Tabulation on Store PI Adjustments" breaks="store,catdesc,cat">
+  <tcol fun="sum" source="shrink_cost" label="Sum of`Shrink Cost"/>
+  <tcol fun="sum" source="shrink_price" label="Sum of`Shrink Price"/>
+</tabu>
+<sort col="store" dir="up"/>
