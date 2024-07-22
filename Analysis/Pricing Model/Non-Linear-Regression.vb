@@ -2,7 +2,11 @@ Option Explicit
 
 ' Function to calculate profit margin after accounting for shrink cost
 Function AdjustedMargin(Sales As Double, Cost As Double, ShrinkCost As Double) As Double
-    AdjustedMargin = (Sales - (Cost + ShrinkCost)) / Sales
+    If Sales = 0 Then
+        AdjustedMargin = 0
+    Else
+        AdjustedMargin = (Sales - (Cost + ShrinkCost)) / Sales
+    End If
 End Function
 
 ' Function to perform non-linear regression (simplified for demonstration)
@@ -54,7 +58,7 @@ End Sub
 
 ' Polynomial fit function (simplified for demonstration)
 Function PolynomialFit(Sales() As Double, Cost() As Double, ShrinkCost() As Double, Units() As Double, Degree As Integer) As Double()
-    Dim Coefficients(0 To Degree) As Double
+    Dim Coefficients(0 To 2) As Double
     ' Simplified example of fitting a polynomial to data
     ' In practice, use a robust method such as Gauss-Newton or Levenberg-Marquardt algorithm
     
