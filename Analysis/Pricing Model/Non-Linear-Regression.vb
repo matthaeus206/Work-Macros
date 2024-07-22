@@ -58,7 +58,9 @@ End Sub
 
 ' Polynomial fit function (simplified for demonstration)
 Function PolynomialFit(Sales() As Double, Cost() As Double, ShrinkCost() As Double, Units() As Double, Degree As Integer) As Double()
-    Dim Coefficients(0 To 2) As Double
+    Dim Coefficients() As Double
+    ReDim Coefficients(0 To Degree)
+    
     ' Simplified example of fitting a polynomial to data
     ' In practice, use a robust method such as Gauss-Newton or Levenberg-Marquardt algorithm
     
